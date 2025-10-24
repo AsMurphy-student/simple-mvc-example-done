@@ -100,6 +100,31 @@ const hostPage3 = (req, res) => {
   res.render('page3');
 };
 
+const hostPage4 = async (req, res) => {
+  //Start with the name as unknown
+  let dogs = [];
+
+  try {
+    const doc = await Dog.find();
+
+    //If we did get a cat back, store it's name in the name variable.
+    if (doc) {
+      dogs = doc;
+    }
+  } catch (err) {
+    //Just log out the error for our records.
+    console.log(err);
+  }
+
+  /* res.render will render the given view from the views folder. In this case, index.
+     We pass it a number of variables to populate the page.
+  */
+  res.render('page4', {
+    dogs: dogs.map(dog => dog.toJSON()),
+    title: 'Page 4',
+  });
+};
+
 // Get name will return the name of the last added cat.
 const getName = async (req, res) => {
   try {
@@ -307,7 +332,7 @@ const searchDogName = async (req, res) => {
   }
   let doc;
   try {
-    doc = await Dog.findOneAndUpdate({ name: req.query.name }, { $inc: { 'age': 1 } }).exec();
+    doc = await Dog.findOneAndUpdate({ name: req.query.name }, { $inc: { 'age': 1 } }, { returnDocument: 'after' }).exec();
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: 'Something went wrong' });
@@ -334,6 +359,7 @@ module.exports = {
   page1: hostPage1,
   page2: hostPage2,
   page3: hostPage3,
+  page4: hostPage4,
   getName,
   setName,
   updateLast,
