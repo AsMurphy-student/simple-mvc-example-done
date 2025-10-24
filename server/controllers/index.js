@@ -6,7 +6,7 @@ const { Cat, Dog } = models;
 
 // Function to handle rendering the index page.
 const hostIndex = async (req, res) => {
-  //Start with the name as unknown
+  // Start with the name as unknown
   let name = 'unknown';
 
   try {
@@ -20,15 +20,15 @@ const hostIndex = async (req, res) => {
        finding one, this query will either find the most recent cat if it exists, or nothing.
     */
     const doc = await Cat.findOne({}, {}, {
-      sort: { 'createdDate': 'descending' }
+      sort: { createdDate: 'descending' },
     }).lean().exec();
 
-    //If we did get a cat back, store it's name in the name variable.
+    // If we did get a cat back, store it's name in the name variable.
     if (doc) {
       name = doc.name;
     }
   } catch (err) {
-    //Just log out the error for our records.
+    // Just log out the error for our records.
     console.log(err);
   }
 
@@ -101,18 +101,18 @@ const hostPage3 = (req, res) => {
 };
 
 const hostPage4 = async (req, res) => {
-  //Start with the name as unknown
+  // Start with the name as unknown
   let dogs = [];
 
   try {
     const doc = await Dog.find();
 
-    //If we did get a cat back, store it's name in the name variable.
+    // If we did get a cat back, store it's name in the name variable.
     if (doc) {
       dogs = doc;
     }
   } catch (err) {
-    //Just log out the error for our records.
+    // Just log out the error for our records.
     console.log(err);
   }
 
@@ -120,7 +120,7 @@ const hostPage4 = async (req, res) => {
      We pass it a number of variables to populate the page.
   */
   res.render('page4', {
-    dogs: dogs.map(dog => dog.toJSON()),
+    dogs: dogs.map((dog) => dog.toJSON()),
     title: 'Page 4',
   });
 };
@@ -135,9 +135,9 @@ const getName = async (req, res) => {
        functionally the same. We are just seeing that it can be written in
        more than one way.
     */
-    const doc = await Cat.findOne({}).sort({ 'createdDate': 'descending' }).lean().exec();
+    const doc = await Cat.findOne({}).sort({ createdDate: 'descending' }).lean().exec();
 
-    //If we did get a cat back, store it's name in the name variable.
+    // If we did get a cat back, store it's name in the name variable.
     if (doc) {
       return res.json({ name: doc.name });
     }
@@ -149,7 +149,7 @@ const getName = async (req, res) => {
     console.log(err);
     return res.status(500).json({ error: 'Something went wrong contacting the database' });
   }
-}
+};
 
 // Function to create a new cat in the database
 const setName = async (req, res) => {
@@ -277,15 +277,15 @@ const updateLast = (req, res) => {
      Finally, findOneAndUpdate would just update the most recent cat it finds that
      matches the query (which could be any cat). So we also need to tell Mongoose to
      sort all the cats in descending order by created date so that we update the
-     most recently added one. The returnDocument key with the 'after' value tells 
+     most recently added one. The returnDocument key with the 'after' value tells
      mongoose to give us back the version of the document AFTER the changes. Otherwise
      it will default to 'before' which gives us the document before the update.
 
      We can use async/await for this, or just use standard promise .then().catch() syntax.
   */
-  const updatePromise = Cat.findOneAndUpdate({}, { $inc: { 'bedsOwned': 1 } }, {
-    returnDocument: 'after', //Populates doc in the .then() with the version after update
-    sort: { 'createdDate': 'descending' }
+  const updatePromise = Cat.findOneAndUpdate({}, { $inc: { bedsOwned: 1 } }, {
+    returnDocument: 'after', // Populates doc in the .then() with the version after update
+    sort: { createdDate: 'descending' },
   }).lean().exec();
 
   // If we successfully save/update them in the database, send back the cat's info.
@@ -332,7 +332,7 @@ const searchDogName = async (req, res) => {
   }
   let doc;
   try {
-    doc = await Dog.findOneAndUpdate({ name: req.query.name }, { $inc: { 'age': 1 } }, { returnDocument: 'after' }).exec();
+    doc = await Dog.findOneAndUpdate({ name: req.query.name }, { $inc: { age: 1 } }, { returnDocument: 'after' }).exec();
   } catch (err) {
     console.log(err);
     return res.status(500).json({ error: 'Something went wrong' });
@@ -341,7 +341,6 @@ const searchDogName = async (req, res) => {
   if (!doc) {
     return res.status(404).json({ error: 'No cats found' });
   }
-
 
   return res.json({ name: doc.name, breed: doc.breed, age: doc.age });
 };
